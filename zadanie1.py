@@ -1,48 +1,83 @@
-
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import norm
-matplotlib.use('TkAgg') # Wyświetlanie wykresów w osobnym oknie
 
-substrings = 0 # Liczba podciągów
-tab_n = [1, 2, 5, 10]  # Liczba zmiennych losowych w jednym podciągu (długość podciągu)
-while substrings not in range(1, 1000000):
-    substrings = int(input("Podaj liczbę podciągów z zakresu od 1 do 1000000: "))
-def get_normal_dist_values(n):
-    return np.random.randn(n)
+matplotlib.use('TkAgg')  # Wyświetlanie wykresów w osobnym oknie
 
-def calculate_avg(data):
-    total = sum(data)
-    size = len(data)
-    avg = total / size
-    if avg != 0:
-        return avg
+m = 0
+while m not in range(1, 100000):
+    m = int(input("Podaj liczbę podciągów 'm': "))  # Na ile podciągów dzielimy cały ciąg zmiennych losowych
+
+
+def random_uniform_distr_values(a, b, count):
+    return np.random.uniform(a, b, count)
+
+
+def split_sequences(seq, n):
+    # Oblicz długość jednego podciągu
+    sebseq_len = n
+    subsec_list = []  # Pusta lista na podciągi
+
+    for i in range(0, len(seq), sebseq_len):
+        sub_sequence = seq[i:i + sebseq_len]
+        subsec_list.append(sub_sequence)
+
+    return subsec_list
+
+
+def calculate_avg(subsec):
+    avg = []  # Lista na średnie
+    for sub_sequence in subsec:
+        # Oblicz średnią dla każdego podciągu i dodaj do listy średnich
+        average = np.mean(sub_sequence)
+        avg.append(average)
+    return avg
+
+
+def draw_chart(avg, m, n):
+    # Rysowanie histogramu
+    count, bins, ignored = plt.hist(avg, bins='auto', density=True, color='blue', alpha=0.7)
+
+    # Obliczanie średniej i odchylenia standardowego dla rysowanej próbki
+    mu = np.mean(avg)
+    sigma = np.std(avg)
+    plt.axvline(mu, color='red', linewidth=1)
+    # Tworzenie linii na podstawie rozkładu normalnego
+    pdf = norm.pdf(bins, mu, sigma)
+    plt.plot(bins, pdf, linewidth=1, color='red')
+    if m == 1:
+        plt.title(f'Histogram symulacji CTG dla {m} podciągu o długości {n}')
     else:
-        print("Błąd podczas liczenia średniej")
-
-def draw_chart(data, n, m):
-    plt.figure(figsize=(10, 8))
-    num, border, bars = plt.hist(data, bins='auto', rwidth=0.8, color='#5a9dfa')
-
-    # Wartość oczekiwana
-    for i in range(len(border) - 1):
-        if border[i] <= 0 < border[i + 1]:
-            bars[i].set_fc('#006bff')
-            break
-
-    mean = np.mean(data)
-    std = np.std(data, ddof=1)
-    x = np.linspace(min(data), max(data), 100)
-    y = norm.pdf(x, mean, std) * m * np.diff(border[:2])[0]
-    plt.plot(x, y, 'r', linewidth=2)
-
+        plt.title(f'Histogram symulacji CTG dla {m} równych podciągów o długości {n}')
+    plt.ylabel('Częstotliwość wystąpienia')
     plt.xlabel('Wartość średnia')
-    plt.ylabel('Częstotliwość występowania')
-    plt.title(f'Histogram symulacji CTG z {m} podciągów o długości {n}')
-    plt.grid(color='grey', linestyle='-', linewidth=0.25)
+
+    # Rysowanie histogramu
+    count, bins, ignored = plt.hist(avg, bins='auto', density=True, color='blue', alpha=0.7, edgecolor='black')
+
+    # Rysowanie linii rozkładu normalnego
+    mu = np.mean(avg)
+    sigma = np.std(avg)
+    pdf = norm.pdf(bins, mu, sigma)
+    plt.plot(bins, pdf, linewidth=1, color='red')
     plt.show()
 
-for n in tab_n:
-    values = [calculate_avg(get_normal_dist_values(n)) for _ in range(substrings)]
-    draw_chart(values, n, substrings)
+
+n_list = [1, 2, 5, 10]
+total_random_var = 100000  # Łączna liczba wygenerowanych zmiennych losowych do testu
+a = 0  # Dolna granica zakresu
+b = 1  # Górna granica zakresu
+
+# Generowanie całej puli zmiennych losowych
+random_vars = random_uniform_distr_values(a, b, total_random_var)
+
+# Dla każdej wartości 'n' z listy 'n_list' tworzymy histogramy
+for n in n_list:
+    # Dzielimy 'random_vars' na podciągi o długości 'n'
+    sub_sequences = split_sequences(random_vars, n)
+    # Obliczamy średnie dla każdego podciągu
+    averages = calculate_avg(sub_sequences)
+    # Tworzymy histogram dla obliczonych
+    plt.figure(figsize=(10, 8))
+    draw_chart(averages, m, n)
