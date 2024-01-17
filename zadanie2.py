@@ -25,28 +25,27 @@ population_2 = [i[1] for i in data]
 def plot_histograms(pop1: list, pop2: list):
     plt.figure(figsize=(14, 7))
 
-    # First histogram and normal distribution
+    # Pierwszy histogram
     plt.subplot(1, 2, 1)
     count1, bins1, ignored1 = plt.hist(pop1, bins='auto', color='blue', alpha=0.7, rwidth=0.85, density=True)
-    mu1, std1 = norm.fit(pop1)  # Fit a normal distribution to the data
-    p1 = norm.pdf(bins1, mu1, std1)  # Probability density function for the normal distribution
+    mu1, std1 = norm.fit(pop1)
+    p1 = norm.pdf(bins1, mu1, std1)
     plt.plot(bins1, p1, 'r-', linewidth=2)
     plt.axvline(mu1, color='red', linewidth=2)
-    plt.title('Histogram dla populacji 1')
-    plt.xlabel('Wartości')
-    plt.ylabel('Częstotliwość')
+    plt.title('Histogram populacji 1')
+    plt.xlabel('Wartości średnie')
+    plt.ylabel('Częstotliwość występowania')
 
-    # Second histogram and normal distribution
+    # Drugi histogram
     plt.subplot(1, 2, 2)
-    count2, bins2, ignored2 = plt.hist(pop2, bins='auto', color='green', alpha=0.7, rwidth=0.85, density=True)
-    mu2, std2 = norm.fit(pop2)  # Fit a normal distribution to the data
-    p2 = norm.pdf(bins2, mu2, std2)  # Probability density function for the normal distribution
+    count2, bins2, ignored2 = plt.hist(pop2, bins='auto', color='black', alpha=0.7, rwidth=0.85, density=True)
+    mu2, std2 = norm.fit(pop2)
+    p2 = norm.pdf(bins2, mu2, std2)
     plt.axvline(mu2, color='red', linewidth=2)
     plt.plot(bins2, p2, 'r-', linewidth=2)
-    plt.title('Histogram dla populacji 2')
-    plt.xlabel('Wartości')
-    plt.ylabel('Częstotliwość')
-
+    plt.title('Histogram populacji 2')
+    plt.xlabel('Wartości średnie')
+    plt.ylabel('Częstotliwość występowania')
     plt.tight_layout()
     plt.show()
 
@@ -133,27 +132,28 @@ def pop_difference_test():
 
     # Interpretacja wyników
     if p_val < 0.05:
-        print("Istnieje statystycznie istotna różnica między średnimi obu populacji.")
+        print("Odrzucamy hipotezę zerową")
     else:
-        print("Nie ma statystycznie istotnej różnicy między średnimi obu populacji.")
+        print("Przyjmujemy hipotezę zerową")
 
 
 def pop_equals_value_test(x):
     # alfa = 0.05
+    # Test dla populacji 1
     t_stat_pop1, p_val_pop1 = ttest_1samp(population_1, x)
 
     # Test dla populacji 2
     t_stat_pop2, p_val_pop2 = ttest_1samp(population_2, x)
     print(f"Populacja 1: Wartość statystyki T: {t_stat_pop1}, P-wartość: {p_val_pop1}")
     if p_val_pop1 < 0.05:
-        print("Istnieje statystycznie istotna różnica między średnią populacji 1 a założoną wartością x.")
+        print("Odrzucamy hipotezę zerową")
     else:
-        print("Nie ma statystycznie istotnej różnicy między średnią populacji 1 a założoną wartością x.")
+        print("Przyjmujemy hipotezę zerową")
     print(f"\nPopulacja 2: Wartość statystyki T: {t_stat_pop2}, P-wartość: {p_val_pop2}")
     if p_val_pop2 < 0.05:
-        print("Istnieje statystycznie istotna różnica między średnią populacji 2 a założoną wartością x.")
+        print("Odrzucamy hipotezę zerową")
     else:
-        print("Nie ma statystycznie istotnej różnicy między średnią populacji 2 a założoną wartością x.")
+        print("Przyjmujemy hipotezę zerową")
 
 
 def print_answers():
