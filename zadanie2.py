@@ -99,7 +99,7 @@ def find_quartile(pop: list, quartile_type: str):
     elif quartile_type == "h":
         quartile_index = (n - 1) * 0.75
     else:
-        raise ValueError("Type must be 'l' for lower or 'h' for higher quartile")
+        raise ValueError("Typ musi wynosić 'l' dla dolnego kwartyla i 'h' dla górnego")
     lower_index = int(quartile_index)
     upper_index = lower_index + 1
     weight = quartile_index - lower_index
@@ -130,7 +130,6 @@ def pop_difference_test():
     t_stat, p_val = ttest_ind(population_1, population_2)
     print(f"Wartość statystyki T: {t_stat}, P-wartość: {p_val}")
 
-    # Interpretacja wyników
     if p_val < 0.05:
         print("Odrzucamy hipotezę zerową")
     else:
